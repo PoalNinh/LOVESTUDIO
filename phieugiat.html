@@ -403,20 +403,19 @@
                         </tr>
                     </thead>
                     <tbody id="orderDetailsBody">
-                        <!-- Dữ liệu sẽ được điền vào đây bằng JavaScript -->
+                        <tr>
+                            <td><span id="nsp"></span> </td>
+                            <td><span id="ma"></span> </td>
+                            <td><span id="tt"></span> </td>
+                            <td><span id="ngaygiao"></span> </td>
+                            <td><span id="ngaynhan"></span> </td>
+                            <td><span id="tentiem"></span></td>
+                            <td><span id="ghichu"></span></td>
+                        </tr>
                     </tbody>
 
                 </table>
 
-                <ul id="ghiChu">
-                    <!-- Nội dung ghi chú sẽ được thêm vào đây bằng JavaScript -->
-                </ul>
-                <div id="thanhToanInfo" class="mt-4">
-                    <!-- Thông tin thanh toán sẽ được thêm vào đây -->
-                </div>
-                <div id="footerInfo" class="mt-4">
-                    <!-- Thông tin cuối sẽ được thêm vào đây -->
-                </div>
             </div>
         </div>
     </page>
@@ -431,6 +430,33 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.centeronline.edu.vn/js/customer.js" type="text/javascript"></script>
     <script>
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // Function to set text content if element exists
+        function setTextContentById(id, value) {
+            var element = document.getElementById(id);
+            if (element) {
+                element.textContent = value;
+            }
+        }
+
+        // Get parameters from URL and set content
+        var parameters = ['nsp', 'ma', 'tt', 'ghichu', 'tentiem', 'ngaynhan', 'ngaygiao' , 'maqr'];
+        parameters.forEach(function (param) {
+            var value = getUrlParameter(param);
+            setTextContentById(param, value);
+        });
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', function () {
             const sizeSelect = document.getElementById('select-paper-size');
             const orientationSelect = document.getElementById('select-paper-orientation');
