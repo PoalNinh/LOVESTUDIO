@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <title>Phiếu giặt trang phục</title>
+    <meta name="csrf-token" content="MHMXdIG4tBlzbq7sMs8y0wjq43Dtbf8PaMgnKDS3">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="logostudio.jpg" type="image/x-icon">
+    <!-- jQuery library -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            background: rgb(204, 204, 204);
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        page {
+            background: white;
+            display: block;
+            margin: 0 auto 0.5cm;
+            box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+        }
+
+        /* Định nghĩa các kích thước giấy */
+        page[size="A4"][layout="portrait"] {
+            width: 21cm;
+        }
+
+        page[size="A4"][layout="landscape"] {
+            width: 29.7cm;
+        }
+
+        page[size="A5"][layout="portrait"] {
+            width: 14.8cm;
+        }
+
+        page[size="A5"][layout="landscape"] {
+            width: 21cm;
+        }
+
+        page[size="A6"][layout="portrait"] {
+            width: 10.5cm;
+        }
+
+        page[size="A6"][layout="landscape"] {
+            width: 14.8cm;
+        }
+
+        page[size="A7"][layout="portrait"] {
+            width: 7.4cm;
+        }
+
+        page[size="A7"][layout="landscape"] {
+            width: 10.5cm;
+        }
+
+        #content {
+            font-size: 13.5px;
+            padding: 40px;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .big-title {
+            font-size: 15px;
+            text-transform: uppercase;
+            font-weight: bold;
+            padding-bottom: 5px;
+        }
+
+        #setup-print {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 200px;
+            background-color: #ffffff;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .center-content {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        hr {
+            margin: 5px 0;
+        }
+
+        .table-center th {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .preserve-format {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* Responsive table */
+        .responsive-table {
+            width: 100%;
+            font-size: 12px;
+        }
+
+        .responsive-table th,
+        .responsive-table td {
+            padding: 5px;
+            word-break: break-word;
+        }
+
+        /* Header table */
+        .header-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .logo-cell {
+            text-align: center;
+            vertical-align: middle;
+            width: 20%;
+        }
+
+        .logo {
+            max-width: 100px;
+            height: auto;
+        }
+
+        .title-cell {
+            text-align: center;
+            vertical-align: middle;
+            width: 60%;
+        }
+
+        .company-name,
+        .document-title {
+            margin: 5px 0;
+        }
+
+        .qr-code {
+            max-width: 100px;
+            height: auto;
+        }
+
+        @media print and (max-width: 21cm) {
+
+            /* A5 và nhỏ hơn */
+            .qr-code {
+                max-width: 80px;
+            }
+        }
+
+        @media print and (max-width: 14.8cm) {
+
+            /* A6 và nhỏ hơn */
+            .qr-code {
+                max-width: 60px;
+            }
+        }
+
+        @media print and (max-width: 10.5cm) {
+
+            /* A7 và nhỏ hơn */
+            .qr-cell {
+                display: none;
+                /* Ẩn mã QR cho kích thước nhỏ nhất */
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: none;
+            }
+
+            page {
+                margin: 0;
+                box-shadow: none;
+            }
+
+            .fixed-button,
+            #setup-print {
+                display: none;
+            }
+
+            .header-table {
+                font-size: 12pt;
+            }
+
+            .logo {
+                max-width: 80px;
+            }
+
+            body[data-paper-size="thermal-80"] {
+                width: 80mm;
+            }
+
+            body[data-paper-size="thermal-58"] {
+                width: 58mm;
+            }
+        }
+
+        /* Responsive print styles */
+        @media print and (max-width: 21cm) {
+
+            .responsive-table,
+            .header-table {
+                font-size: 10pt;
+            }
+
+            .logo {
+                max-width: 60px;
+            }
+
+            .responsive-table th,
+            .responsive-table td {
+                padding: 3px;
+            }
+        }
+
+        @media print and (max-width: 14.8cm) {
+
+            .responsive-table,
+            .header-table {
+                font-size: 8pt;
+            }
+
+            .logo {
+                max-width: 40px;
+            }
+
+            .responsive-table th,
+            .responsive-table td {
+                padding: 2px;
+            }
+
+            .responsive-table .center-content th {
+                white-space: normal;
+            }
+        }
+
+        @media print and (max-width: 10.5cm) {
+
+            .responsive-table,
+            .header-table {
+                font-size: 6pt;
+            }
+
+            .responsive-table th,
+            .responsive-table td {
+                padding: 1px;
+            }
+
+            .logo-cell {
+                display: none;
+            }
+
+            .title-cell {
+                width: 100%;
+            }
+
+            .responsive-table th:nth-child(4),
+            .responsive-table td:nth-child(4),
+            .responsive-table th:nth-child(5),
+            .responsive-table td:nth-child(5) {
+                display: none;
+            }
+        }
+
+        /* Thermal printer styles */
+        @media print and (max-width: 80mm) {
+            .responsive-table {
+                font-size: 8px;
+            }
+
+            .responsive-table th,
+            .responsive-table td {
+                padding: 1px;
+            }
+
+            .responsive-table th:nth-child(3),
+            .responsive-table td:nth-child(3),
+            .responsive-table th:nth-child(4),
+            .responsive-table td:nth-child(4),
+            .responsive-table th:nth-child(5),
+            .responsive-table td:nth-child(5) {
+                display: none;
+            }
+        }
+
+        /* Cho máy in nhiệt */
+        body[data-paper-size^="thermal-"] .qr-cell {
+            display: none;
+        }
+
+        body[data-paper-size^="thermal-"] .header-table {
+            font-size: 8pt;
+        }
+
+        body[data-paper-size^="thermal-"] .logo-cell {
+            display: none;
+        }
+
+        body[data-paper-size^="thermal-"] .title-cell {
+            width: 100%;
+        }
+
+        @media only screen and (max-width: 1024px) {
+
+            #fixed-panel,
+            #list_option_print {
+                display: none !important;
+            }
+        }
+    </style>
+
+
+</head>
+
+<body>
+
+    <div id="setup-print" class="mb-3">
+        <select id="select-paper-size" class="form-control mb-2">
+            <option value="A4">A4</option>
+            <option value="A5">A5</option>
+            <option value="A6">A6</option>
+            <option value="A7">A7</option>
+            <option value="thermal-80">Máy in nhiệt 80mm</option>
+            <option value="thermal-58">Máy in nhiệt 58mm</option>
+        </select>
+        <select id="select-paper-orientation" class="form-control mb-2">
+            <option value="portrait">Dọc</option>
+            <option value="landscape">Ngang</option>
+        </select>
+        <button onclick="printDocument()" class="btn btn-info" style="width: 100%">
+            <i class="fa fa-print"></i> <span class="language_print">In</span>
+        </button>
+    </div>
+    <page size="A4" id="page" layout="landscape">
+        <div id="content">
+            <div class="content_page1">
+                <table style="width: 100%;" class="header-table">
+                    <tr>
+                        <td style="width: 20%;" class="logo-cell">
+                            <img src="logostudio.jpg" alt="Logo trái" class="logo">
+                        </td>
+                        <td style="width: 60%;" class="title-cell">
+                            <h5 class="bold document-title">PHIẾU GIẶT TRANG PHỤC</h5>
+                        </td>
+                        <td style="width: 20%;" class="logo-cell qr-cell">
+                            <img src="https://quickchart.io/qr?text=YourTextHere&size=150" alt="QR Code"
+                                class="qr-code">
+                        </td>
+                    </tr>
+                </table>
+
+
+                <div style="clear: both"></div>
+                <br>
+                <p><strong>Kính gửi: <span id="companyName"></span></strong></p>
+                <p>Địa chỉ: <span id="companyAddress"></span></p>
+                <p>Chúng tôi xin gửi đến Quý khách hàng phiếu xuất giặt như sau:</p>
+
+                <table class="table table-bordered responsive-table">
+                    <thead class="center-content">
+                        <tr>
+                            <th colspan="7">THÔNG TIN SẢN PHẨM</th>
+                        </tr>
+                        <tr>
+                            <th>Nhóm sản phẩm</th>
+                            <th>Mã SP</th>
+                            <th>Trạng thái</th>
+                            <th>Ngày giao</th>
+                            <th>Ngày nhận</th>
+                            <th>Tên tiệm</th>
+                            <th>Ghi chú</th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="orderDetailsBody">
+                        <!-- Dữ liệu sẽ được điền vào đây bằng JavaScript -->
+                    </tbody>
+
+                </table>
+
+                <ul id="ghiChu">
+                    <!-- Nội dung ghi chú sẽ được thêm vào đây bằng JavaScript -->
+                </ul>
+                <div id="thanhToanInfo" class="mt-4">
+                    <!-- Thông tin thanh toán sẽ được thêm vào đây -->
+                </div>
+                <div id="footerInfo" class="mt-4">
+                    <!-- Thông tin cuối sẽ được thêm vào đây -->
+                </div>
+            </div>
+        </div>
+    </page>
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/printThis/1.15.0/printThis.min.js"
+        integrity="sha512-d5Jr3NflEZmFDdFHZtxeJtBzk0eB+kkRXWFQqEc1EKmolXjHm2IKCA7kTvXBNjIYzjXfD5XzIjaaErpkZHCkBg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.centeronline.edu.vn/js/customer.js" type="text/javascript"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sizeSelect = document.getElementById('select-paper-size');
+            const orientationSelect = document.getElementById('select-paper-orientation');
+            const page = document.getElementById('page');
+
+            function updatePageFormat() {
+                const size = sizeSelect.value;
+                const orientation = orientationSelect.value;
+                if (page) {
+                    page.setAttribute('size', size);
+                    page.setAttribute('layout', orientation);
+                }
+                adjustTableForPrintSize();
+            }
+
+            function adjustTableForPrintSize() {
+                const paperSize = sizeSelect.value;
+                const table = document.querySelector('.responsive-table');
+
+                if (table) {
+                    table.classList.remove('size-a5', 'size-a6', 'size-a7', 'size-thermal');
+                    if (paperSize === 'A5') {
+                        table.classList.add('size-a5');
+                    } else if (paperSize === 'A6') {
+                        table.classList.add('size-a6');
+                    } else if (paperSize === 'A7') {
+                        table.classList.add('size-a7');
+                    } else if (paperSize.startsWith('thermal-')) {
+                        table.classList.add('size-thermal');
+                    }
+                }
+            }
+
+            function printDocument() {
+                const paperSize = sizeSelect.value;
+                const paperOrientation = orientationSelect.value;
+
+                // Xử lý đặc biệt cho máy in nhiệt
+                if (paperSize.startsWith('thermal-')) {
+                    document.body.setAttribute('data-paper-size', paperSize);
+                    document.querySelectorAll('.hide-on-thermal').forEach(el => el.style.display = 'none');
+                } else {
+                    document.body.removeAttribute('data-paper-size');
+                    document.querySelectorAll('.hide-on-thermal').forEach(el => el.style.display = '');
+                }
+
+                const style = document.createElement('style');
+                style.innerHTML = `
+            @page {
+                size: ${paperSize === 'thermal-80' ? '80mm' :
+                        paperSize === 'thermal-58' ? '58mm' :
+                            paperSize + ' ' + paperOrientation};
+                margin: 0;
+            }
+        `;
+                document.head.appendChild(style);
+
+                window.print();
+
+                setTimeout(() => {
+                    document.head.removeChild(style);
+                }, 0);
+            }
+
+            if (sizeSelect) {
+                sizeSelect.addEventListener('change', updatePageFormat);
+            }
+            if (orientationSelect) {
+                orientationSelect.addEventListener('change', updatePageFormat);
+            }
+
+            // Khởi tạo ban đầu
+            updatePageFormat();
+
+            // Gán hàm printDocument cho nút in
+            const printButton = document.querySelector('button[onclick="printDocument()"]');
+            if (printButton) {
+                printButton.onclick = printDocument;
+            }
+
+            // Các hàm tiện ích khác
+            window.formatCurrency = function (value) {
+                if (!value) return '';
+                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+            };
+
+            window.formatDate = function (dateString) {
+                if (!dateString) return '';
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) return dateString;
+                return date.toLocaleDateString('vi-VN');
+            };
+
+            window.numberToWords = function (number) {
+                // Giữ nguyên hàm numberToWords của bạn
+            };
+        });
+        function updateQRCode() {
+            const paperSize = document.getElementById('select-paper-size').value;
+            const qrCode = document.querySelector('.qr-code');
+            let qrSize;
+
+            switch (paperSize) {
+                case 'A4':
+                    qrSize = 150;
+                    break;
+                case 'A5':
+                    qrSize = 100;
+                    break;
+                case 'A6':
+                    qrSize = 80;
+                    break;
+                case 'A7':
+                case 'thermal-80':
+                case 'thermal-58':
+                    qrSize = 60;
+                    break;
+                default:
+                    qrSize = 150;
+            }
+
+            qrCode.src = `https://quickchart.io/qr?text=YourTextHere&size=${qrSize}`;
+        }
+
+        // Gọi hàm này khi người dùng thay đổi kích thước giấy
+        document.getElementById('select-paper-size').addEventListener('change', updateQRCode);
+
+        // Gọi hàm khi trang được tải để áp dụng cho kích thước mặc định
+        document.addEventListener('DOMContentLoaded', updateQRCode);
+    </script>
+</body>
+
+</html>
