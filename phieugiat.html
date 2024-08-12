@@ -11,6 +11,8 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         @page {
             margin: 0;
@@ -139,7 +141,7 @@
 
             .logo,
             .qr-code {
-                max-width: 40px;
+                max-width: 50px;
             }
         }
 
@@ -175,7 +177,9 @@
 
         body[data-paper-size^="thermal-"] .qr-cell img,
         body[data-paper-size^="thermal-"] .logo-cell img {
-           width: 50%;
+            max-width: 60px;
+            width: 130%;
+            height: auto;
         }
 
         body[data-paper-size^="thermal-"] .title-cell {
@@ -186,24 +190,39 @@
         body[data-paper-size^="thermal-"] .responsive-table {
             font-size: 8px;
         }
+
+        #custom-size-inputs {
+            display: none;
+        }
+
+        #custom-size-inputs input {
+            width: 45%;
+            display: inline-block;
+        }
     </style>
 </head>
 
 <body>
     <div id="setup-print">
-        <select id="select-paper-size" class="form-control">
-            <option value="A4">A4</option>
-            <option value="A5">A5</option>
-            <option value="A6">A6</option>
-            <option value="A7">A7</option>
-            <option value="thermal-80">Máy in nhiệt 80mm</option>
-            <option value="thermal-58">Máy in nhiệt 58mm</option>
+        <select id="select-paper-size" class="form-control mb-2">
+
+            <option value="A4" hidden>A4</option>
+            <option value="A5" hidden>A5</option>
+            <option value="A6" hidden> A6</option>
+            <option value="A7" hidden>A7</option>
+            <option value="thermal-80" selected>Máy in nhiệt 80mm</option>
+            <option value="thermal-58" hidden>Máy in nhiệt 58mm</option>
+            <option value="custom" hidden>Kích thước tùy chỉnh</option>
         </select>
-        <select id="select-paper-orientation" class="form-control">
+        <div id="custom-size-inputs" class="mb-2" hidden>
+            <input type="number" id="custom-width" placeholder="Chiều rộng (mm)" class="form-control mb-2">
+            <input type="number" id="custom-height" placeholder="Chiều cao (mm)" class="form-control">
+        </div>
+        <select id="select-paper-orientation" hidden class="form-control mb-2">
             <option value="portrait">Dọc</option>
             <option value="landscape">Ngang</option>
         </select>
-        <button onclick="printDocument()" class="btn btn-info">
+        <button onclick="printDocument()" class="btn btn-info mb-2">
             <i class="fa fa-print"></i> In
         </button>
         <button onclick="exportToPDF()" class="btn btn-primary">
@@ -213,27 +232,69 @@
     <div id="content">
         <table class="header-table">
             <tr>
-                <td class="logo-cell">
-                    <img src="logostudio.jpg" alt="Logo trái" class="logo">
-                </td>
+                <td class="logo-cell"><img class="logo" src="https://poalninh.github.io/LOVESTUDIO/logostudio.jpg"></td>
+
+
                 <td class="title-cell">
-                    <p class="bold">PHIẾU GIẶT TRANG PHỤC</p>
+                    <p><b>PHIẾU GIẶT TRANG PHỤC</b> </p>
+                    <p>Số phiếu: <span id="sophieu"></span></p>
                 </td>
-                <td class="logo-cell qr-cell">
-                    <img src="https://quickchart.io/qr?text=YourTextHere" alt="QR Code" class="qr-code">
+                <td class="qr-cell">
+                    <div id="qrcode"></div>
                 </td>
             </tr>
         </table>
-        <br>
-        <p><strong>Kính gửi: <span id="companyName"></span></strong></p>
-        <p>Địa chỉ: <span id="companyAddress"></span></p>
-        <p>Chúng tôi xin gửi đến Quý khách hàng phiếu xuất giặt như sau:</p>
-        <div id="productInfo">
-            <!-- Nội dung này sẽ được cập nhật động bởi JavaScript -->
-        </div>
+        <hr>
+        <table class="responsive-table">
+            <tr>
+                <th>Nhân viên:</th>
+                <td><span id="j"></span></td>
+                <th>Số điện thoại:</th>
+                <td><span id="i"></span></td>
+            </tr>
+            <tr>
+                <th>Ngày giao:</th>
+                <td><span id="e"></span></td>
+                <th>Ngày nhận:</th>
+                <td><span id="f"></span></td>
+            </tr>
+            <tr>
+                <th>Địa chỉ:</th>
+                <td colspan="3"><span id="h"></span></td>
+
+            </tr>
+            <tr>
+                <th>Tên tiệm:</th>
+                <td colspan="3"> <span id="g"></span></td>
+
+            </tr>
+        </table>
+        <hr>
+        <p class="title-cell">Danh sách trang phục</p>
+        <table class="responsive-table">
+            <thead>
+                <tr>
+                    <th>Nhóm SP</th>
+                    <th>Mã sản phẩm</th>
+                    <th>Trạng thái</th>
+                    <th>Ghi chú</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span id="b"></span></td>
+                    <td><span id="c"></span></td>
+                    <td><span id="d"></span></td>
+                    <td><span id="k"></span></td>
+                </tr>
+
+            </tbody>
+        </table>
     </div>
     <script>
-         function getUrlParameter(name) {
+        // Các hàm hiện có giữ nguyên
+
+        function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
             var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
             var results = regex.exec(location.search);
@@ -246,114 +307,113 @@
                 element.textContent = value;
             }
         }
+        function adjustQRCodeSize(size) {
+            const qrCodeElement = document.getElementById('qrcode');
+            let qrSize;
+            switch (size) {
+                case 'A1': case 'A2': qrSize = '100px'; break;
+                case 'A3': qrSize = '150px'; break;
+                case 'A4': qrSize = '128px'; break;
+                case 'A5': qrSize = '100px'; break;
+                case 'A6': qrSize = '40px'; break;
+                case 'A7': qrSize = '30px'; break;
+                case 'thermal-80': qrSize = '40px'; break;
+                case 'thermal-58': qrSize = '30px'; break;
+                case 'custom': qrSize = '128px'; break;
+                default: qrSize = '128px';
+            }
+            if (qrCodeElement) {
+                qrCodeElement.style.width = qrSize;
+                qrCodeElement.style.height = qrSize;
+            }
+        }
+        function generateQRCode(value) {
+            var qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: value,
+                width: 128,
+                height: 128,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
 
         function updatePageFormat() {
             const size = document.getElementById('select-paper-size').value;
             const orientation = document.getElementById('select-paper-orientation').value;
             document.body.setAttribute('data-paper-size', size);
             document.body.setAttribute('data-paper-orientation', orientation);
-            updateQRCode();
+
             adjustContentSize(size, orientation);
             adjustFontSize(size);
-            updateProductInfoDisplay(size);
+            adjustImageSize(size);
+            adjustQRCodeSize(size);
         }
 
         function adjustContentSize(size, orientation) {
             const content = document.getElementById('content');
             let width, height;
             switch (size) {
-                case 'A4': width = '210mm'; height = 'auto'; break;
-                case 'A5': width = '148mm'; height = 'auto'; break;
-                case 'A6': width = '105mm'; height = 'auto'; break;
-                case 'A7': width = '74mm'; height = 'auto'; break;
-                case 'thermal-80': width = '80mm'; height = '130nm'; break;
-                case 'thermal-58': width = '58mm'; height = '130nm'; break;
-                default: width = '210mm'; height = 'auto';
+                case 'A1': width = '594mm'; height = '841mm'; break;
+                case 'A2': width = '420mm'; height = '594mm'; break;
+                case 'A3': width = '297mm'; height = '420mm'; break;
+                case 'A4': width = '210mm'; height = '297mm'; break;
+                case 'A5': width = '148mm'; height = '210mm'; break;
+                case 'A6': width = '105mm'; height = '148mm'; break;
+                case 'A7': width = '74mm'; height = '105mm'; break;
+                case 'thermal-80': width = '80mm'; height = 'auto'; break;
+                case 'thermal-58': width = '58mm'; height = 'auto'; break;
+                case 'custom':
+                    width = document.getElementById('custom-width').value + 'mm';
+                    height = document.getElementById('custom-height').value + 'mm';
+                    break;
+                default: width = '210mm'; height = '297mm';
             }
             if (orientation === 'landscape') {
                 [width, height] = [height, width];
             }
             content.style.width = width;
-            content.style.minHeight = height !== 'auto' ? height : '0';
+            content.style.minHeight = 'auto';
             content.style.height = 'auto';
-            content.style.overflow = 'hidden';
+            content.style.overflow = 'visible';
         }
 
         function adjustFontSize(size) {
             const content = document.getElementById('content');
             let fontSize;
             switch (size) {
+                case 'A1': fontSize = '18px'; break;
+                case 'A2': fontSize = '16px'; break;
+                case 'A3': fontSize = '14px'; break;
                 case 'A4': fontSize = '12px'; break;
-                case 'A5': fontSize = '11px'; break;
-                case 'A6': fontSize = '10px'; break;
-                case 'A7': fontSize = '9px'; break;
-                case 'thermal-80': fontSize = '8px'; break;
-                case 'thermal-58': fontSize = '7px'; break;
+                case 'A5': fontSize = '10px'; break;
+                case 'A6': fontSize = '9px'; break;
+                case 'A7': fontSize = '8px'; break;
+                case 'thermal-80': fontSize = '7px'; break;
+                case 'thermal-58': fontSize = '6px'; break;
+                case 'custom': fontSize = '12px'; break;
                 default: fontSize = '12px';
             }
             content.style.fontSize = fontSize;
         }
-
-        function updateProductInfoDisplay(size) {
-            const productInfo = document.getElementById('productInfo');
-            if (size === 'thermal-80' || size === 'thermal-58' || size === 'A7' || size === 'A6') {
-                productInfo.innerHTML = `
-                    <div class="product-info-line"><strong>Nhóm sản phẩm:</strong> <span id="nsp"></span></div>
-                    <div class="product-info-line"><strong>Mã SP:</strong> <span id="ma"></span></div>
-                    <div class="product-info-line"><strong>Trạng thái:</strong> <span id="tt"></span></div>
-                    <div class="product-info-line"><strong>Ngày giao:</strong> <span id="ngaygiao"></span></div>
-                    <div class="product-info-line"><strong>Ngày nhận:</strong> <span id="ngaynhan"></span></div>
-                    <div class="product-info-line"><strong>Tên tiệm:</strong> <span id="tentiem"></span></div>
-                    <div class="product-info-line"><strong>Ghi chú:</strong> <span id="ghichu"></span></div>
-                `;
-            } else {
-                productInfo.innerHTML = `
-                    <table class="table table-bordered responsive-table">
-                        <thead>
-                            <tr>
-                                <th colspan="7">THÔNG TIN SẢN PHẨM</th>
-                            </tr>
-                            <tr>
-                                <th>Nhóm sản phẩm</th>
-                                <th>Mã SP</th>
-                                <th>Trạng thái</th>
-                                <th>Ngày giao</th>
-                                <th>Ngày nhận</th>
-                                <th>Tên tiệm</th>
-                                <th>Ghi chú</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><span id="nsp"></span></td>
-                                <td><span id="ma"></span></td>
-                                <td><span id="tt"></span></td>
-                                <td><span id="ngaygiao"></span></td>
-                                <td><span id="ngaynhan"></span></td>
-                                <td><span id="tentiem"></span></td>
-                                <td><span id="ghichu"></span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                `;
-            }
-            updateProductInfo();
-        }
-
-        function updateProductInfo() {
-            const parameters = ['nsp', 'ma', 'tt', 'ghichu', 'tentiem', 'ngaynhan', 'ngaygiao'];
-            parameters.forEach(function (param) {
-                setTextContentById(param, getUrlParameter(param));
-            });
-        }
-
-        function updateQRCode() {
-            const paperSize = document.getElementById('select-paper-size').value;
+        function adjustImageSize(size) {
+            const logo = document.querySelector('.logo');
             const qrCode = document.querySelector('.qr-code');
-            let qrSize = paperSize === 'A4' ? 150 : paperSize === 'A5' ? 100 : paperSize === 'A6' ? 80 : 60;
-            if (qrCode) {
-                qrCode.src = `https://quickchart.io/qr?text=YourTextHere&size=${qrSize}`;
+            let imageSize;
+            switch (size) {
+                case 'A1': case 'A2': imageSize = '150px'; break;
+                case 'A3': imageSize = '120px'; break;
+                case 'A4': imageSize = '100px'; break;
+                case 'A5': imageSize = '80px'; break;
+                case 'A6': imageSize = '60px'; break;
+                case 'A7': imageSize = '40px'; break;
+                case 'thermal-80': imageSize = '60px'; break;
+                case 'thermal-58': imageSize = '60px'; break;
+                case 'custom': imageSize = '100px'; break;
+                default: imageSize = '100px';
             }
+            if (logo) logo.style.maxWidth = imageSize;
+            if (qrCode) qrCode.style.maxWidth = imageSize;
         }
 
         function printDocument() {
@@ -368,30 +428,127 @@
             const orientation = document.getElementById('select-paper-orientation').value;
 
             let format;
+            let isCustomSize = false;
             switch (size) {
+                case 'A1': format = 'a1'; break;
+                case 'A2': format = 'a2'; break;
+                case 'A3': format = 'a3'; break;
                 case 'A4': format = 'a4'; break;
                 case 'A5': format = 'a5'; break;
                 case 'A6': format = 'a6'; break;
                 case 'A7': format = [74, 105]; break;
-                case 'thermal-80': format = [80, 130]; break;
-                case 'thermal-58': format = [58, 130]; break;
+                case 'thermal-80':
+                    format = [80, 130];
+                    isCustomSize = true;
+                    break;
+                case 'thermal-58':
+                    format = [58, 130];
+                    isCustomSize = true;
+                    break;
+                case 'custom':
+                    format = [
+                        parseFloat(document.getElementById('custom-width').value),
+                        parseFloat(document.getElementById('custom-height').value)
+                    ];
+                    isCustomSize = true;
+                    break;
                 default: format = 'a4';
             }
 
             const opt = {
                 margin: 0,
-                filename: 'phieu_giat_trang_phuc.pdf',
+                filename: 'test.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    logging: true,
+                    onrendered: function (canvas) {
+                        // Không thêm canvas vào DOM
+                    }
+                },
                 jsPDF: { unit: 'mm', format: format, orientation: orientation }
             };
 
-            html2pdf().from(element).set(opt).save();
+            if (!isCustomSize) {
+                opt.pagebreak = { mode: ['avoid-all', 'css', 'legacy'] };
+            }
+
+            // Sử dụng promise để xử lý việc tạo PDF
+            html2pdf().from(element).set(opt).toPdf().get('pdf').then(function (pdf) {
+                try {
+                    if (isCustomSize) {
+                        const pageCount = pdf.internal.getNumberOfPages();
+                        if (pageCount > 1) {
+                            // Lấy chiều cao của nội dung thực tế
+                            const contentHeight = pdf.internal.pageSize.getHeight() * (pageCount - 1) +
+                                pdf.internal.pages[pageCount].length;
+
+                            // Tạo trang mới với chiều cao phù hợp
+                            pdf.deletePage(pageCount);
+                            pdf.addPage([pdf.internal.pageSize.getWidth(), contentHeight]);
+
+                            // Vẽ lại nội dung vào trang mới
+                            pdf.setPage(1);
+                            const canvas = document.createElement('canvas');
+                            const context = canvas.getContext('2d');
+                            canvas.width = pdf.internal.pageSize.getWidth() * 2;
+                            canvas.height = contentHeight * 2;
+                            html2canvas(element, {
+                                scale: 2,
+                                canvas: canvas,
+                                width: pdf.internal.pageSize.getWidth(),
+                                height: contentHeight
+                            }).then(function (canvas) {
+                                pdf.addImage(canvas.toDataURL('image/jpeg', 1.0), 'JPEG', 0, 0, pdf.internal.pageSize.getWidth(), contentHeight);
+                                pdf.save();
+                            });
+                        } else {
+                            pdf.save();
+                        }
+                    } else {
+                        pdf.save();
+                    }
+                } catch (error) {
+                    console.error('Lỗi khi lưu PDF:', error);
+                    alert('Có lỗi xảy ra khi tạo PDF. Vui lòng thử lại.');
+                }
+            }).catch(function (error) {
+                console.error('Lỗi khi tạo PDF:', error);
+                alert('Có lỗi xảy ra khi tạo PDF. Vui lòng thử lại.');
+            });
+        }
+        function updateProductInfo() {
+            const parameters = ['a', 'b', 'c', 'd', 'e', 'f', 'g','h',  'i', 'j' , 'k' , 'l' , 'm' , 'n' , 'o' , 'p' , 'q' , 'r' , 's' , 't' , 'u' , 'v' , 'w' , 'x' , 'y' , 'z'];
+            parameters.forEach(function (param) {
+                setTextContentById(param, getUrlParameter(param));
+            });
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('select-paper-size').addEventListener('change', updatePageFormat);
+            // Lấy số phiếu từ URL và đặt nó vào phần tử có id 'sophieu'
+            var soPhieu = getUrlParameter('sophieu');
+            setTextContentById('sophieu', soPhieu);
+            updateProductInfo()
+            // Tạo mã QR cho số phiếu
+            generateQRCode(soPhieu);
+
+            const paperSizeSelect = document.getElementById('select-paper-size');
+            const customSizeInputs = document.getElementById('custom-size-inputs');
+
+            paperSizeSelect.addEventListener('change', function () {
+                if (this.value === 'custom') {
+                    customSizeInputs.style.display = 'block';
+                } else {
+                    customSizeInputs.style.display = 'none';
+                }
+                updatePageFormat();
+            });
+
             document.getElementById('select-paper-orientation').addEventListener('change', updatePageFormat);
+            document.getElementById('custom-width').addEventListener('input', updatePageFormat);
+            document.getElementById('custom-height').addEventListener('input', updatePageFormat);
+
             updatePageFormat();
         });
     </script>
